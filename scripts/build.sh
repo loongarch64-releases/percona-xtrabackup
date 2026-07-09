@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -xeuo pipefail
 
 UPSTREAM_OWNER=percona
 UPSTREAM_REPO=percona-xtrabackup
@@ -15,6 +15,12 @@ SRCS="${ROOT_DIR}/srcs"
 
 mkdir -p "${DISTS}/${VERSION}" "${SRCS}"
 
+# ======================================================================
+
+PATCHES="${ROOT_DIR}/patches"
+BUILD_DIR="${SRCS}/${VERSION}"
+DIST_DIR="${DISTS}/${VERSION}"
+
 # ==========================================
 # 👇 用户自定义构建逻辑 (示例)
 # ==========================================
@@ -26,10 +32,8 @@ prepare()
 {
     echo "📦 [Prepare] Setting up build environment..."
     
-    # TODO: 在此处添加准备命令
-    # 例如：apt-get update && apt-get install -y build-essential
-    # 例如：git clone -b ${VERSION} --depth=1 https://github.com/percona/percona-xtrabackup ${SRCS}/${VERSION}
-    # 例如：patch -p1 < patches/loongarch-fix.patch
+    rm -rf ${SRCS}/${VERSION}
+    git clone -b ${VERSION} --depth=1 https://github.com/${UPSTREAM_OWNER}/${UPSTREAM_REPO} ${SRCS}/${VERSION}
     
     echo "✅ [Prepare] Environment ready."
 }
@@ -39,10 +43,15 @@ build()
 {
     echo "🔨 [Build] Compiling source code..."
     
-    # TODO: 在此处添加编译命令
-    # 例如：make -j$(nproc) ARCH=loongarch64
-    # 例如：cmake -DCMAKE_BUILD_TYPE=Release .. && make
-    
+    (
+        cd ${BUILD_DIR}
+        git submodule update --init --recursive
+        mkdir build
+        cd build
+        cmake .. -DWITH_DEBUG=0 -DWITH_SSL=system -DCMAKE_POLICY_VERSION_MINIMUM=3.5 -DCMAKE_BUILD_TYPE=Release
+        make -j`nproc`
+        cpack
+    )    
 
     echo "✅ [Build] Compilation finished."
 }
@@ -52,9 +61,7 @@ post_build()
 {
     echo "📦 [Post-Build] Organizing artifacts..."
     
-    # TODO: 在此处添加整理命令
-    # 例如：mkdir -p dists && cp binary dist/
-    # 例如：strip dist/binary
+    cp -a ${BUILD_DIR}/build/*.tar.gz $DIST_DIR/ 
     
     echo "✅ [Post-Build] Artifacts ready in ./dists/${VERSION}."
 }

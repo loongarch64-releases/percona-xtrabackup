@@ -29,7 +29,6 @@ fi
 
 echo "🔨 Building Docker image: ${DOCKER_IMAGE_NAME} ..."
 docker build \
-    --platoform "${PLATFORM}" \
     -f "${DOCKERFILE_PATH}" \
     -t "${DOCKER_IMAGE_NAME}" \
     "${ROOT_DIR}"

@@ -1,4 +1,4 @@
-FROM lcr.loongnix.cn/library/golang:1.25
+FROM lcr.loongnix.cn/library/debian:unstable
 
 RUN apt-get update && apt-get install -y \
     bash \
@@ -9,6 +9,13 @@ RUN apt-get update && apt-get install -y \
     gcc \
     libc6-dev \
     libseccomp-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y cmake make gcc g++ libaio-dev libncurses5-dev \
+    libssl-dev libgcrypt20-dev libev-dev libcurl4-openssl-dev \
+    libprotobuf-dev protobuf-compiler \
+    libzstd-dev liblz4-dev libreadline-dev bison libsasl2-dev \
+    git libtirpc-dev libproc2-dev vim \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /workspace

@@ -43,6 +43,6 @@ docker run --rm \
     -e UPSTREAM_OWNER="${UPSTREAM_OWNER}" \
     -e UPSTREAM_REPO="${UPSTREAM_REPO}" \
     "${DOCKER_IMAGE_NAME}" \
-    /bin/bash -c "./scripts/build.sh $VERSION"
+    /bin/bash -c "./scripts/build.sh ${VERSION}"
 
 echo "✅ Build completed successfully!"

@@ -2,7 +2,7 @@ name: Auto Build percona-xtrabackup (Self hosted)
 
 on:
   schedule:
-    - cron: '0 16 * * *'
+    - cron: '42 18 * * *'
   workflow_dispatch:
 
 env:
